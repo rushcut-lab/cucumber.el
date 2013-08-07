@@ -429,7 +429,9 @@ are loaded on startup.  If nil, don't load snippets.")
                                                        default-directory))
                                       redoer)))))
 
-    (global-set-key (kbd "C-c ,r") redoer-cmd)))
+    (global-set-key (kbd "C-c ,r") redoer-cmd)
+    (global-set-key (kbd "C-c ,w") redoer-cmd)
+    ))
 
 (defun* feature-run-cucumber (cuke-opts &key feature-file)
   "Runs cucumber with the specified options"

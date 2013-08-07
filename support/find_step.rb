@@ -1,5 +1,5 @@
+# -*- coding: utf-8 -*-
 require 'rubygems'
-gem "ruby_parser", "~> 2.0"
 require 'ruby_parser'
 
 class Step
@@ -38,6 +38,8 @@ class StepParser
 
   attr_accessor :steps, :file
 
+  KEYWORDS = %w{When Then Given And 만약 만일 그러면 먼저 그리고}
+
   def initialize(file)
     @file = file
     @steps = []
@@ -53,8 +55,8 @@ class StepParser
       end
     when :iter
       child_sexp = sexp[1]
-      return unless child_sexp[0] == :call && [:When, :Then, :Given, :And].include?(child_sexp[2])
-      regexp = child_sexp[3][1] && child_sexp[3][1][1]
+      return unless child_sexp[0] == :call && KEYWORDS.map {|k| k.to_sym}.include?(child_sexp[2])
+      regexp = child_sexp[3].value
       @steps << Step.new(regexp, file, child_sexp.line)
     else
       sexp.each do |child_sexp|
@@ -64,7 +66,7 @@ class StepParser
   end
 end
 
-input_text = ARGV[0].strip.gsub(/(When|Then|Given|And) */, "")
+input_text = ARGV[0].strip.gsub(/(#{StepParser::KEYWORDS.join("|")}) */, "")
 
 files = Dir["features/**/*steps.rb"]
 steps = []
